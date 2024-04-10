@@ -1,5 +1,4 @@
 # Prediction/estimation functions used in DML/DML simulations
-# Need to include truncation for binary outcomes: to do still
 
 require(fields)
 require(GpGp)
@@ -8,26 +7,6 @@ require(randomForest)
 library(dbarts)
 # setwd("~/GitHub/Spatial-DML")
 source("TV_SVM_function_hpc.R")
-# fields_reg <- function(Y, S, D, nu, range=.1){
-#   
-#   fit <- Krig(S, Y, Z=D, Covariance="Matern", smoothness=nu,aRange=range)
-#   betahat <- coef.Krig(fit)[4]
-#   se_betahat <- NA
-#   return(c(betahat, se_betahat))
-# }
-# 
-# fields_predict <- function(trainS, trainY, trainD, testS, nuD, nuU, range=.1){
-#   
-#   nu <- min(nuD, nuU)
-#   fit.Y <- Krig(trainS, trainY, Covariance="Matern", smoothness=nu,aRange=range)
-#   predY <- predict(fit.Y, testS)
-#   
-#   
-#   fit.D <- Krig(trainS, trainD, Covariance="Matern", smoothness=nu,aRange=range)
-#   predD <- predict(fit.D, testS)
-#   
-#   return(list(predY=predY, predD=predD))
-# }
 
 spatial_reg_gpgp <- function(S,Y,X=NULL,
                              Sp=NULL,
@@ -81,16 +60,7 @@ spline_fn <- function(Y, S, D, k=100, method="GCV.Cp"){
   return(list(betahat, var_betahat))
 }
 # 
-# krige_predict_ghat <- function(trainS, trainY, trainD, testS){
-#   # Fit the GP with D, predict without D to get spatial random effects ie ghat
-#   fit.Y <- spatial_reg_gpgp(S=trainS, Y=trainY, X=trainD, Sp=testS) 
-#   ghat <- fit.Y$pred
-#   
-#   fit.D <- spatial_reg_gpgp(S=trainS, Y=trainD, Sp=testS)
-#   predD <- fit.D$pred#truncate(fit.D$pred, 0, 1)
-#   
-#   return(list(ghat=ghat, predD=predD))
-# }
+
 
 krige_predict_lhat <- function(trainS, trainY, trainD, testS){
   # Fit the GP with D, predict without D to get spatial random effects ie ghat
@@ -232,10 +202,7 @@ gSEM_fn <- function(Y, D, S, k=100, B=100, include_dsr=FALSE){
     var_betahat <- var(out$t)
     return(list(betahat, var_betahat))
   }
-  
-  # se_betahat <- summary(fit.R)$se[2] # Pretty sure this is not really right either
-  # var_betahat <- fit.R$Vp[2:(p+1), 2:(p+1)] # pretty sure not right, should be bootstrapped
-  
+   
 }
 
 gpgp_predict <- function(trainS, trainY, trainD, testS, fitY, fitD){
@@ -277,6 +244,7 @@ gpgp_predict_X <- function(trainS, trainY, trainD, testS,
 }
 
 svm_predict <- function(trainS, trainY, trainD, testS){
+  # Prediction function calling training-validation GP estimation function
   n <- nrow(trainS)
   trainD.mat <- as.matrix(trainD)
   p <- ncol(trainD.mat)
@@ -296,10 +264,10 @@ svm_predict <- function(trainS, trainY, trainD, testS){
   return(list(predY=predY, predD=predD))
 }
 
-# Shift DML
+# Shift DML (Gilbert 2021)
 
 shift_dml = function(Y, D, S, shift=1, B){
-  # JHU's implemented shift estimator function
+  # Code from Gilbert et al (2021)
   # modified to include na.rm=TRUE
   # and to do bootstrapping in the function
   

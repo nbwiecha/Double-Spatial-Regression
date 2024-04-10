@@ -7,7 +7,8 @@
 
 # Implementing the scheme given by Eberts and Steinwart (2013)
 # Giving essentially-optimal convergence rates for the GP posterior mean
-# (which is equivalent to the LS-SVM and KRR estimators with squared error loss)
+# (which is equivalent to the least-squares support vector machine (LS-SVM)
+# and KRR estimators with squared error loss)
 
 # The scheme is to use a Gaussian kernel, with cross-validated regularization
 # (equiv to variance) and lengthscale parameters.
@@ -108,25 +109,7 @@ cv_gp_predict <- function(trainX, testX,
     
   }
   
-  # for(j in 1:nrow(param.grid)){
-  #   
-  #   lambda <- param.grid[j, 1]
-  #   gamma <- param.grid[j, 2]
-  #   
-  #   K1 <- exp(-d1^2/gamma^2)
-  #   K2 <- exp(-d2^2/gamma^2)
-  #   yhat <- K2 %*% (solve(K1 + m*lambda*diag(m)) %*% D1.Y   )
-  #   
-  #   # 4. Save MSEs
-  #   mses[j] <- mean((yhat - D2.Y)^2)
-  #   
-  # }
   if(!silent){close(pb)}
-  
-  # 5. Select (lambda, gamma) pair that minimize MSE
-  # selected <- which(mses==min(mses))
-  # lambda.final <- param.grid[selected, 1]
-  # gamma.final <- param.grid[selected, 2]
   
   # 6. Predict on test set
   d.train <- rdist(trainX)
