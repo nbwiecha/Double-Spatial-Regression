@@ -1,5 +1,5 @@
 # Double-Spatial-Regression
-Code for "Double Spatial Regression", aka double machine learning (Chernozhukov et al, 2018) partially linear regression applied to spatial data.
+Code for "Double Spatial Regression," double machine learning (Chernozhukov et al, 2018) partially linear regression applied to spatial data.
 
 DoubleML (Bach et al, 2024) is the official software implementation of Chernozhukov et al (2018).
 
