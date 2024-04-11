@@ -1,10 +1,8 @@
-# Prediction/estimation functions used in DSR simulations
+# Prediction/estimation functions used in DSR estimation
 
 require(fields)
 require(GpGp)
 require(mgcv)
-require(randomForest)
-library(dbarts)
 source("TV_SVM_function_hpc.R")
 
 
