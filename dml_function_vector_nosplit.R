@@ -1,4 +1,5 @@
 # Generic DML Function for Partially Linear Model without cross-fitting
+# Implementing Chernozhukov et al (2018)
 # Nate Wiecha
 
 # predict_fn will need to be specified, it makes predictions for Y and D
