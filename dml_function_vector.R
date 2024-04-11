@@ -27,10 +27,8 @@ dml_lhat <- function(Y, D, S, K, predict_fn, ...){
     p <- ncol(D)
     arr <- array(dim=c(n, p, p))
     for(i in 1:n){
-      # I think more efficient to use apply()? Something like that.
       arr[i,,] <- -(D - Dhat)[i,] %*% t((D - Dhat)[i,])
     }
-    # -(D - Dhat) * (D-Dhat)
     return(arr)
   }
   

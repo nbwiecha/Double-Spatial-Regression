@@ -355,7 +355,6 @@ dml_alt_nosplit_spline <- function(Y, D, S, k=100){
     for(i in 1:n){
       arr[i,,] <- -(D - Dhat)[i,] %*% t((D)[i,])
     }
-    # -(D - Dhat) * (D-Dhat)
     return(arr)
   }
   

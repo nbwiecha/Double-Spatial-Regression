@@ -25,10 +25,7 @@
 # 5. Select the (lambda, gamma) pair that minimized MSE
 # 6. Predict on the prediction dataset using select parameters and training data
 
-# rm(list=ls())
-# library(tidyverse)
 library(fields) # for rdist() function
-# library(GpGp)
 
 cv_gp_predict <- function(trainX, testX,
                           trainY, #testY,
@@ -92,13 +89,6 @@ cv_gp_predict <- function(trainX, testX,
       mse <- mean((yhat - D2.Y)^2)
       
       if(mse < lowest.mse){
-        
-        # Note for future: probably makes sense to save precomputed matrices
-        # for currently-selected param values. would save time at end with 
-        # expensive solve.
-        
-        # Or could update end to use chol2inv(chol( . )) might be a lot faster
-        # for big N
         
         lowest.mse <- mse
         lambda.selected <- lambda
