@@ -6,12 +6,12 @@
 #################################################
 
 # Implementing the scheme given by Eberts and Steinwart (2013)
-# Giving essentially-optimal convergence rates for the GP posterior mean
+# Giving essentially-optimal asymptotic convergence rates for the GP posterior mean
 # (which is equivalent to the least-squares support vector machine (LS-SVM)
 # and KRR estimators with squared error loss)
 
-# The scheme is to use a Gaussian kernel, with cross-validated regularization
-# (equiv to variance) and lengthscale parameters.
+# The scheme is to use a Gaussian kernel, with training-validation selection of 
+# regularization (equiv to variance) and lengthscale hyperparameters.
 
 # Function will take as input the training and prediction datasets
 # And the fineness of the grids used for parameter selection by CV
@@ -81,9 +81,7 @@ cv_gp_predict <- function(trainX, testX,
       j <- j+1
       
       if(!silent){setTxtProgressBar(pb, j)}
-      # K <- K1 + lambda*m*diag(m)
-      # K1.inv <- chol2inv(chol(K)) # inverse of K1
-      # yhat <- K2 %*% (K1.inv %*% D1.Y)
+
       yhat <- K2.Q %*% ((1/(d.K1 + m*lambda))*Q.y)
       
       mse <- mean((yhat - D2.Y)^2)

@@ -10,7 +10,7 @@
 # and output a list with components predY, predD
 
 # _lhat corresponds to score (4.4) from Chernozhukov
-# _alt corresponds to score (4.3) from Chernozhukov
+# others corresponds to score (4.3) from Chernozhukov
 
 # See also: DoubleML R package which is the official implementation of Chernozhukov (2018)
 
@@ -182,10 +182,10 @@ dml_lhat_covariates <- function(Y, D, S, X, K, predict_fn, ...){
 }
 
 ################################################################################
-#                Alternative DSR estimator - GpGp only                         #
+#                      Main DSR estimator - GpGp only                          #
 ################################################################################
 
-dml_alt <- function(Y, D, S, X, K){
+dml_gpgp <- function(Y, D, S, X, K){
   require(GpGp)
   truncate <-  function(x, a, b) {
     x[x < a] <- a
