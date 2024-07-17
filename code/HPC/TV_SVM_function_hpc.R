@@ -5,13 +5,15 @@
 #    with Gaussian kernel and CV'd parameters   #
 #################################################
 
-# Implementing the scheme given by Eberts and Steinwart (2013)
-# Giving essentially-optimal asymptotic convergence rates for the GP posterior mean
-# (which is equivalent to the least-squares support vector machine (LS-SVM)
-# and KRR estimators with squared error loss)
+# For Two-Stage Estimators for Spatial Confounding
+# Code by Nate Wiecha, North Carolina State University
 
-# The scheme is to use a Gaussian kernel, with training-validation selection of 
-# regularization (equiv to variance) and lengthscale hyperparameters.
+# Implementing the scheme given by Eberts and Steinwart (2013)
+# Giving essentially-optimal convergence rates for the GP posterior mean
+# (which is equivalent to the LS-SVM and KRR estimators with squared error loss)
+
+# The scheme is to use a Gaussian kernel, with cross-validated regularization
+# (equiv to variance) and lengthscale parameters.
 
 # Function will take as input the training and prediction datasets
 # And the fineness of the grids used for parameter selection by CV
@@ -81,12 +83,21 @@ cv_gp_predict <- function(trainX, testX,
       j <- j+1
       
       if(!silent){setTxtProgressBar(pb, j)}
-
+      # K <- K1 + lambda*m*diag(m)
+      # K1.inv <- chol2inv(chol(K)) # inverse of K1
+      # yhat <- K2 %*% (K1.inv %*% D1.Y)
       yhat <- K2.Q %*% ((1/(d.K1 + m*lambda))*Q.y)
       
       mse <- mean((yhat - D2.Y)^2)
       
       if(mse < lowest.mse){
+        
+        # Note for future: probably makes sense to save precomputed matrices
+        # for currently-selected param values. would save time at end with 
+        # expensive solve.
+        
+        # Or could update end to use chol2inv(chol( . )) might be a lot faster
+        # for big N
         
         lowest.mse <- mse
         lambda.selected <- lambda
@@ -98,6 +109,11 @@ cv_gp_predict <- function(trainX, testX,
   }
   
   if(!silent){close(pb)}
+  
+  # 5. Select (lambda, gamma) pair that minimize MSE
+  # selected <- which(mses==min(mses))
+  # lambda.final <- param.grid[selected, 1]
+  # gamma.final <- param.grid[selected, 2]
   
   # 6. Predict on test set
   d.train <- rdist(trainX)

@@ -1,5 +1,5 @@
 # Double-Spatial-Regression
-Code for "Double Spatial Regression", aka double machine learning (Chernozhukov et al, 2018) partially linear regression applied to spatial data.
+Code for "Double Spatial Regression", aka double machine learning (Chernozhukov et al, 2018) partially linear regression applied to spatial data with Gaussian Process regression to estimate the spatial surfaces. This code accompanies "Two-Stage Estimators for Spatial Confounding" by Nate Wiecha, Jane A. Hoppin, and Brian J. Reich.
 
 DoubleML (Bach et al, 2024) is the official software implementation of Chernozhukov et al (2018).
 
