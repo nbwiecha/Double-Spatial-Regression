@@ -5,8 +5,7 @@
 #BSUB -J dml_trans
 #BSUB -o stdout.%J
 #BSUB -e stderr.%J
-#BSUB -q stat
-cd /share/$GROUP/$USER/DML_sims
+cd /share/$GROUP/$USER/DSR
 module load R
 conda activate env_R421
 Rscript run_trans_sims_hpc.R

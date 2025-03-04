@@ -1,4 +1,5 @@
-# Simulation result figures for Two-Stage Estimators for Spatial Confounding
+# Simulation result figures 
+# for Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
 
 rm(list=ls())
@@ -9,35 +10,33 @@ library(RColorBrewer)
 library(cowplot)
 source("code//HPC//simulation_functions_hpc.R")
 
-load("outputs//HPC_outputs_seed//sims_deterministic_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_deterministic_n1000.Rdata")
 
-load("outputs//HPC_outputs_seed//sims_highdimvar_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_highdimvar_n1000.Rdata")
 
-load("outputs//HPC_outputs_seed//sims_exp_nonspatial_grid_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_exp_nonspatial_grid_n1000.Rdata")
 
-load("outputs//HPC_outputs_seed//sims_U_gneiting_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_U_gneiting_n1000.Rdata")
 
-load("outputs//HPC_outputs_seed//sims_U_gneiting_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_U_matern_n1000.Rdata")
 
-load("outputs//HPC_outputs_seed//sims_U_matern_n1000.Rdata")
-
-load("outputs//HPC_outputs_seed//sims_trans_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_trans_n1000.Rdata")
 
 # Coverage table for paper
-U_matern_sims$out1$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_matern_sims$out2$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_gneiting_sims$out1$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_gneiting_sims$out2$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
+U_matern_sims$out1$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_matern_sims$out2$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_gneiting_sims$out1$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_gneiting_sims$out2$output["95% CI Coverage",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
 
-U_matern_sims$out1$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_matern_sims$out2$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_gneiting_sims$out1$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
-U_gneiting_sims$out2$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_int", "LMM", "SpatialPlus")]
+U_matern_sims$out1$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_matern_sims$out2$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_gneiting_sims$out1$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
+U_gneiting_sims$out2$output["95% CI Length",c("DML_alt", "DML_GP", "gSEM_noint", "LMM", "SpatialPlus")]
 
 ################################################################################
 #                                  Plots                                       #
 ################################################################################
-methods <- c("LMM", "SpatialPlus", "gSEM_int", "DML_GP",  "DML_alt")
+methods <- c("LMM", "SpatialPlus", "gSEM_noint", "DML_GP",  "DML_alt")
 method_names <- c("LMM", "Spatial+", "gSEM", "DSR (theory)",  "DSR")
 make_boxplots <- function(output, methods, method_names){
   num_plots <- length(output)/2
@@ -65,8 +64,8 @@ make_boxplots <- function(output, methods, method_names){
       ylab(bquote(hat(beta) - beta[0])) +
       theme(text = element_text(family = "serif"),
             legend.key.size=unit(1,'cm'),
-            axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))# +
-      ylim(-.6, 1.1)
+            axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+      ylim(-1.1, 1.1)
   }
   
   return(plots_point)
@@ -80,7 +79,7 @@ plots_U_matern_grid <- ggarrange(plotlist=plots_U_matern)
 
 U_matern.title <- ggdraw() + 
   draw_label(
-    bquote(hat(beta)-beta[0]~with~rough~U),
+    bquote(hat(beta)-beta[0]~with~rough~confounder),
     fontfamily = 'serif',
     x = 0,
     hjust = 0,
@@ -106,7 +105,7 @@ plots_U_gneiting_grid <- ggarrange(plotlist=plots_U_gneiting)
 
 U_gneiting.title <- ggdraw() + 
   draw_label(
-    bquote(hat(beta)-beta[0]~with~smooth~U),
+    bquote(hat(beta)-beta[0]~with~smooth~confounder),
     fontfamily = 'serif',
     x = 0,
     hjust = 0,
@@ -133,4 +132,3 @@ dev.off()
 png("outputs//U_gneiting_plot.png", width = 1000, height = 800)
 U_gneiting.plot
 dev.off()
-

@@ -15,12 +15,12 @@ latex_tbl <- function(table){
   table3 <- t(round(table2, 3))
   
   
-  methods <- c("OLS", "LMM", "Spline.GCV", "Spline.REML", "SpatialPlus", "gSEM_int", 
-               "DML_GP", "DML_GP_nosplit", "DML_alt", "DML_alt_nosplit",
-               "DML_spline_nosplit", "DML_spline_nosplit_lhat")
+  methods <- c("OLS", "LMM", "Spline.GCV", "Spline.REML", "SpatialPlus", "gSEM_noint", 
+               "DML_GP", "DML_GpGp", "DML_GP_nosplit", "DML_alt", "DML_alt_nosplit",
+               "DML_spline_nosplit", "DML_spline_nosplit_lhat", "DML_lhat_smooth", "DML_alt_smooth")
   method_names <- c("OLS", "LMM", "Spline (GCV)", "Spline (REML)", "Spatial+", "gSEM",
-                    "DSR (theory)",  "DSR (theory, no crossfit)", "DSR", "DSR (no crossfit)",
-                    "DSR (spline)", "DSR (alt., spline)")
+                    "DSR (theory)", "DSR (theory, GpGp)",  "DSR (theory, no crossfit)", "DSR", "DSR (no crossfit)",
+                    "DSR (spline, no crossfit)", "DSR (theory, spline, no crossfit)", "DSR (theory, GpGp, smooth)", "DSR (smooth)")
   table.out <- table3[methods,]
   row.names(table.out) <- method_names
   return(table.out)
@@ -31,7 +31,7 @@ Smooth U
 
 ```{r}
 
-load("outputs//HPC_outputs//sims_U_gneiting_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_U_gneiting_n1000.Rdata")
 
 # A Matern
 kbl(latex_tbl(U_gneiting_sims$out1$output))
@@ -47,7 +47,7 @@ kbl(latex_tbl(U_gneiting_sims$out2$output))
 Rough U
 ```{r}
 
-load("outputs//HPC_outputs//sims_U_matern_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_U_matern_n1000.Rdata")
 # A Matern
 kbl(latex_tbl(U_matern_sims$out1$output))
 
@@ -58,7 +58,7 @@ kbl(latex_tbl(U_matern_sims$out2$output))
 
 Transformed U
 ```{r}
-load("outputs//HPC_outputs//sims_trans_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_trans_n1000.Rdata")
 
 #  Middle out 
 kbl(latex_tbl(trans_sims$out1$output))
@@ -76,7 +76,7 @@ kbl(latex_tbl(trans_sims$out4$output))
 
 High variance
 ```{r}
-load("outputs//HPC_outputs//sims_highdimvar_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_highdimvar_n1000.Rdata")
 
 kbl(latex_tbl(highvar_sim$out1$output))
 
@@ -86,7 +86,7 @@ Exponential and grid
 
 ```{r}
 
-load("outputs//HPC_outputs//sims_exp_nonspatial_grid_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_exp_nonspatial_grid_n1000.Rdata")
 
 # Exponential 
 kbl(latex_tbl(exponential_sim$out1$output))
@@ -99,7 +99,7 @@ kbl(latex_tbl(grid_sim$out1$output))
 Deterministic
 
 ```{r}
-load("outputs//HPC_outputs//sims_deterministic_n1000.Rdata")
+load("outputs//HPC_outputs_revision//sims_deterministic_n1000.Rdata")
 kbl(latex_tbl(deterministic_sim_same$out1$output))
 kbl(latex_tbl(deterministic_sim_diff$out1$output))
 

@@ -1,15 +1,19 @@
-# Simulations with deterministic spatial surfaces
-# For Two-Stage Estimators for Spatial Confounding
+# Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
+
+# Run simulations: scenarios where latent functions of space are determined deterministically.
 
 rm(list=ls())
 
+# setwd("~/GitHub/Spatial-DML/code/HPC")
 source("dml_function_vector_hpc.R")
 source("dml_simulation_function_foreach_determ_hpc.R")
+# source("dml_simulation_function_foreach_highdim_hpc.R")
 source("simulation_functions_hpc.R")
 
 nCores <- strtoi(Sys.getenv(c("LSB_DJOB_NUMPROC")))
 cl <- makeCluster(nCores)
+# cl <- makeCluster(7)
 registerDoSNOW(cl)
 
 nsims <- 400

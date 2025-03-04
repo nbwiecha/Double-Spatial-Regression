@@ -1,11 +1,17 @@
-# Run simulations with exponential covariance, no spatial variation, gridded locations
-# For Two-Stage Estimators for Spatial Confounding
+# Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
+
+# Run simulations: scenarios where latent functions of space are determined:
+# using exponential covariance
+# with spatial locations on a regular grid
+# where there is no spatial variance (not used in paper)
+
 rm(list=ls())
 
+# setwd("~/GitHub/Spatial-DML/code/HPC")
 source("dml_function_vector_hpc.R")
 source("dml_simulation_function_foreach_hpc.R")
-source("dml_simulation_function_foreach_highdim_hpc.R")
+# source("dml_simulation_function_foreach_highdim_hpc.R")
 source("simulation_functions_hpc.R")
 
 

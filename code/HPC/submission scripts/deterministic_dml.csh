@@ -1,12 +1,11 @@
 #!/bin/tcsh
-#BSUB -n 16
-#BSUB -W 8:00
+#BSUB -n 32
+#BSUB -W 16:00
 #BSUB -R "span[hosts=1]"
 #BSUB -J dml_deterministic
 #BSUB -o stdout.%J
 #BSUB -e stderr.%J
-#BSUB -q stat
-cd /share/$GROUP/$USER/DML_sims
+cd /share/$GROUP/$USER/DSR
 module load R
 conda activate env_R421
 Rscript run_deterministic_sims_hpc.R

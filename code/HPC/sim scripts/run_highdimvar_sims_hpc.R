@@ -1,15 +1,16 @@
-# Simulations for high dimensional spatial surface (not used) and higher variance in treatment variable
-# For Two-Stage Estimators for Spatial Confounding
-# Code by Nate Wiecha
+# Run 7/14/2023 simulations
+# Updated 10/10/2023 to reduce simulations run to useful cases only
 rm(list=ls())
 
+# setwd("~/GitHub/Spatial-DML/code/HPC")
 source("dml_function_vector_hpc.R")
 source("dml_simulation_function_foreach_hpc.R")
-source("dml_simulation_function_foreach_highdim_hpc.R")
+# source("dml_simulation_function_foreach_highdim_hpc.R")
 source("simulation_functions_hpc.R")
 
 
 nCores <- strtoi(Sys.getenv(c("LSB_DJOB_NUMPROC")))
+# cl <- makeCluster(7)
 cl <- makeCluster(nCores)
 registerDoSNOW(cl)
 

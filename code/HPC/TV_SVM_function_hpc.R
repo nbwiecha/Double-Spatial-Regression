@@ -1,19 +1,16 @@
 #################################################
 #   Training-validation "LS-SVM"                #
 #     aka Kernel Ridge Regression               #
-#     aka GP posterior mean                     #
+#     aka GP posterior mean/Kriging             #
 #    with Gaussian kernel and CV'd parameters   #
 #################################################
 
-# For Two-Stage Estimators for Spatial Confounding
-# Code by Nate Wiecha, North Carolina State University
-
 # Implementing the scheme given by Eberts and Steinwart (2013)
-# Giving essentially-optimal convergence rates for the GP posterior mean
+# Giving essentially-optimal asy. convergence rates for the GP posterior mean
 # (which is equivalent to the LS-SVM and KRR estimators with squared error loss)
 
 # The scheme is to use a Gaussian kernel, with cross-validated regularization
-# (equiv to variance) and lengthscale parameters.
+# (equiv to error variance) and lengthscale parameters.
 
 # Function will take as input the training and prediction datasets
 # And the fineness of the grids used for parameter selection by CV
@@ -27,7 +24,10 @@
 # 5. Select the (lambda, gamma) pair that minimized MSE
 # 6. Predict on the prediction dataset using select parameters and training data
 
+# rm(list=ls())
+# library(tidyverse)
 library(fields) # for rdist() function
+# library(GpGp)
 
 cv_gp_predict <- function(trainX, testX,
                           trainY, #testY,
@@ -52,6 +52,7 @@ cv_gp_predict <- function(trainX, testX,
   gamma.grid <- seq(0, 1, by=2*delta)[-1]
  
   # 3. For each (lambda, gamma) pair, predict on D2 using D1 as training data
+  # 4. select pair that minimizes MSE of predictions on test data
   d1 <- rdist(D1.X)
   d2 <- rdist(D2.X, D1.X)
   
@@ -83,21 +84,13 @@ cv_gp_predict <- function(trainX, testX,
       j <- j+1
       
       if(!silent){setTxtProgressBar(pb, j)}
-      # K <- K1 + lambda*m*diag(m)
-      # K1.inv <- chol2inv(chol(K)) # inverse of K1
-      # yhat <- K2 %*% (K1.inv %*% D1.Y)
+      
       yhat <- K2.Q %*% ((1/(d.K1 + m*lambda))*Q.y)
       
       mse <- mean((yhat - D2.Y)^2)
       
       if(mse < lowest.mse){
-        
-        # Note for future: probably makes sense to save precomputed matrices
-        # for currently-selected param values. would save time at end with 
-        # expensive solve.
-        
-        # Or could update end to use chol2inv(chol( . )) might be a lot faster
-        # for big N
+
         
         lowest.mse <- mse
         lambda.selected <- lambda
@@ -108,14 +101,10 @@ cv_gp_predict <- function(trainX, testX,
     
   }
   
+
   if(!silent){close(pb)}
   
-  # 5. Select (lambda, gamma) pair that minimize MSE
-  # selected <- which(mses==min(mses))
-  # lambda.final <- param.grid[selected, 1]
-  # gamma.final <- param.grid[selected, 2]
-  
-  # 6. Predict on test set
+  # 5. Predict on test set
   d.train <- rdist(trainX)
   d.test <- rdist(testX, trainX)
   

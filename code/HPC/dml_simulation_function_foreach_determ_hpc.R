@@ -1,4 +1,4 @@
-# Function to perform simulation study for Two-Stage Estimators for Spatial Confounding
+# Function to perform simulation study for Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Simulations for deterministic spatial surfaces in D, Y as opposed to random GP draws
 # Code by Nate Wiecha, North Carolina State University
 
@@ -8,6 +8,7 @@ library(doParallel)
 library(fields)
 library(geoR)
 library(boot)
+# setwd("~/GitHub/Spatial-DML")
 
 run_dml_simulation_determ <- function(
                                n, nsims,     # sample size, length of D, number of MC samples
@@ -20,6 +21,8 @@ run_dml_simulation_determ <- function(
                                rho,          # corr. param.s bw D, U (not actual corr)
                                theta,        # treatment effect of D on Y; p-vector
                                sdY=1, sdD=1, # nugget variance in Y and D
+                               # progress_bar=TRUE, # Progress bar
+                               # message=FALSE,
                                cov.model.d="matern", # covariance function if not using matern
                                cov.model.u="gneiting",
                                binary_D=FALSE,
@@ -41,12 +44,16 @@ run_dml_simulation_determ <- function(
   p <- 1 # dimension of treatment
   
   # Set up MC simulation
-  methods <- c("OLS", "Spline.GCV", "Spline.REML", "LMM", "SpatialPlus", "gSEM_int", "gSEM_noint",
-              "Shift_DML",  "DML_GP",  "DML_alt", "DML_GP_nosplit", "DML_alt_nosplit",
-              "DML_spline_nosplit", "DML_spline_nosplit_lhat")
-  # if(!LOO){methods <- c("OLS", "Spline", "SpatialPlus", "gSEM",
-                        # "DML_GP_ghat", 
-                        # "DML_spline_lhat",  "DML_RF")}
+  methods <- c("OLS", "Spline.GCV", "Spline.REML", "LMM", "SpatialPlus", 
+               # "gSEM_int", 
+               "gSEM_noint",
+               "Shift_DML",  
+               "DML_GP", "DML_GpGp",  
+               "DML_alt", 
+               "DML_GP_nosplit", "DML_alt_nosplit",
+               "DML_spline_nosplit", "DML_spline_nosplit_lhat",
+               "DML_lhat_smooth", "DML_alt_smooth")
+
   
   ## Store results as list of matrices which contain the MC estimates of 
   ## theta hat and se(theta hat)
@@ -64,6 +71,7 @@ run_dml_simulation_determ <- function(
   corrs <- rep(NA, nsims) 
   
   # Run the simulation
+  # if(progress_bar){pb <- txtProgressBar(min=0, max=nsims, style=3)}
   nu <- c(nuD, nuU)
   run_sim_iter <- function(methods, seed){
     set.seed(seed)
@@ -142,8 +150,9 @@ run_dml_simulation_determ <- function(
       # dim(R.D)
       
       L.D <- chol(R.D)
+
       L.U <- chol(R.U)
-      
+
       Sigma1 <- cbind(R.D, rho * t(L.D) %*% L.U)
       Sigma2 <- cbind(rho * t(L.U) %*% L.D, R.U)
       Sigma <- rbind(Sigma1, Sigma2)
@@ -159,6 +168,7 @@ run_dml_simulation_determ <- function(
     Y <- D * theta + h(S, U) + y_fn2(S) + g(S, rnorm(n=n, sd=sdY))
     D <- D - mean(D)
     Y <- Y - mean(Y)
+    
 
     if(p==1){
       iter_result["OLS",] <- as.numeric(ols_fn(Y=Y, D=D))
@@ -168,7 +178,7 @@ run_dml_simulation_determ <- function(
       iter_result["SpatialPlus",] <- as.numeric(spatial_plus_fn(Y, D, S, k=300, B=B))
       # iter_result["gSEM_k100",] <- as.numeric(gSEM_fn(Y, D, S))
       gsem.fit <- gSEM_fn(Y, D, S, k=300, B=B, include_dsr=TRUE)
-      iter_result["gSEM_int",] <- as.numeric(gsem.fit[1:2])
+      # iter_result["gSEM_int",] <- as.numeric(gsem.fit[1:2])
       iter_result["gSEM_noint",] <- as.numeric(gsem.fit[3:4])
       iter_result["Shift_DML",] <- tryCatch(
         {
@@ -176,12 +186,17 @@ run_dml_simulation_determ <- function(
         },
         error=function(e){return(NA)})
       iter_result["DML_GP",] <- as.numeric(dml_lhat(Y, D, S, K=K, predict_fn=svm_predict))
-      iter_result["DML_alt",] <- as.numeric(dml_alt(Y, D, S, X=NULL, K=K))
+      iter_result["DML_GpGp",] <- as.numeric(dml_lhat(Y, D, S, K=K, predict_fn=gpgp_predict, type="lhat"))
+      iter_result["DML_alt",] <- as.numeric(dml_alt(Y, D, S, X=NULL, K=K, refit=TRUE))
       iter_result["DML_GP_nosplit",] <- as.numeric(dml_lhat_nosplit(Y, D, S, predict_fn=svm_predict))
       iter_result["DML_alt_nosplit",] <- as.numeric(dml_alt_nosplit(Y, D, S, X=NULL))
       iter_result["DML_spline_nosplit",] <- as.numeric(dml_alt_nosplit_spline(Y, D, S, k=300))
       iter_result["DML_spline_nosplit_lhat",] <- as.numeric(dml_lhat_nosplit(Y, D, S, 
                                                                             predict_fn=spline_predict, k=300))
+      iter_result["DML_lhat_smooth",] <- as.numeric(dml_lhat(Y, D, S, K=K, predict_fn=gpgp_predict, type="lhat",
+                                                             covfun_name="matern45_isotropic"))
+      iter_result["DML_alt_smooth",] <- as.numeric(dml_alt(Y, D, S, X=NULL, K=K, refit=TRUE,
+                                                           covfun_name="matern45_isotropic"))
     }else{
       print("p>1 not implemented yet")
       return()

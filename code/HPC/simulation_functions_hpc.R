@@ -1,4 +1,4 @@
-# Full simulation functions for Two-Stage Estimators for Spatial Confounding
+# Full simulation functions for Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
 
 get_outputs <- function(result, theta, n){
@@ -66,16 +66,6 @@ create_output <- function(sim){
   
 }
 
-run_sim_higherp <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  sim1 <- run_dml_simulation_p(n=n, nsims, phiD=.2, phiU=.2,
-                               nuD=1.5, nuU=1.5, rho=.5, sdY=1, sdD=.1,
-                               confounding_fn=NULL, 
-                               cov.model.d="matern", cov.model.u="matern",
-                               binary_D=binary_D, grid=FALSE,
-                               p=3,theta=rep(.5, 3))
-  out1 <- create_output(sim1)
-  return(list(sim1=sim1, out1=out1))
-}
 
 run_sim_deterministic <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
   sim1 <- run_dml_simulation_determ(n=n, nsims, phiD=.2, phiU=.2,
@@ -100,6 +90,7 @@ run_sim_grid <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
 }
 
 run_sim_nospatial <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
+  # Just used to check results, not used in paper
   sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
                                      nuD=NULL, nuU=NULL, rho=0.5, theta=.5, sdY=1, sdD=.1,
                                      confounding_fn=zeroed,
@@ -111,7 +102,7 @@ run_sim_nospatial <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
 
 
 run_sim_exponential <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
+  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.114, phiU=.114,
                                      nuD=0.5, nuU=0.5, rho=0.5, theta=.5, sdY=1, sdD=.1,
                                      confounding_fn=NULL,
                                      cov.model.d="matern", cov.model.u="matern",
@@ -120,16 +111,6 @@ run_sim_exponential <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
   return(list(sim1=sim1, out1=out1))
 }
 
-
-run_sim_high_dim <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  sim1 <- run_dml_simulation_highdim(n=n, nsims=nsims, phiD=.2, phiU=.2,
-                             nuD=NULL, nuU=NULL, rho=0.5, theta=.5, sdY=1, sdD=.1,
-                             confounding_fn=NULL, dim=10, true_dim=2,
-                             cov.model.d="gneiting", cov.model.u="gneiting",
-                             binary_D=binary_D)
-  out1 <- create_output(sim1)
-  return(list(sim1=sim1, out1=out1))
-}
 
 run_sim_higher_var <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
   sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
@@ -142,7 +123,7 @@ run_sim_higher_var <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
 }
 
 run_sims_unconfounded <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  
+  # Not used in paper
   # matern/matern
   sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
                              nuD=1.5, nuU=1.5, rho=0, theta=.5, sdY=1, sdD=.1,
@@ -167,7 +148,7 @@ run_sims_unconfounded <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
 }
 
 run_sims_U_matern <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
+  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.072, phiU=.072,
                              nuD=1.5, nuU=1.5, rho=.5, theta=.5, sdY=1, sdD=.1,
                              confounding_fn=NULL,
                              cov.model.d="matern", cov.model.u="matern",
@@ -175,7 +156,7 @@ run_sims_U_matern <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
   )
   out1 <- create_output(sim1)
   
-  sim2 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
+  sim2 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.072,
                              nuD=NULL, nuU=1.5, rho=.5, theta=.5, sdY=1, sdD=.1,
                              confounding_fn=NULL,
                              cov.model.d="gneiting", cov.model.u="matern",
@@ -189,7 +170,7 @@ run_sims_U_matern <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
 }
 
 run_sims_U_gneiting <- function(n, nsims, error_fn=NULL, binary_D=FALSE){
-  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.2, phiU=.2,
+  sim1 <- run_dml_simulation(n=n, nsims=nsims, phiD=.072, phiU=.2,
                              nuD=1.5, nuU=NULL, rho=.5, theta=.5, sdY=1, sdD=.1,
                              confounding_fn=NULL,
                              cov.model.d="matern", cov.model.u="gneiting",

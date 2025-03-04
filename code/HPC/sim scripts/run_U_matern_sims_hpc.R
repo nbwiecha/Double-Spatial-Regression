@@ -1,8 +1,12 @@
-# Simulations using a rough (Matern 1.5 covariance) unobserved confounder
-# For Two-Stage Estimators for Spatial Confounding
+# Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
+
+# Run simulations: scenarios where unobserved confounder is generated with
+# Matern 1.5 (fairly rough) covariance.
+
 rm(list=ls())
 
+# setwd("~/GitHub/Spatial-DML/code/HPC")
 source("dml_function_vector_hpc.R")
 source("dml_simulation_function_foreach_hpc.R")
 source("simulation_functions_hpc.R")

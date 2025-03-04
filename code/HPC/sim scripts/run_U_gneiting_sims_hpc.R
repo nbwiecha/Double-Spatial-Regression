@@ -1,8 +1,12 @@
-# Simulations using a smooth (Gneiting covariance) unobserved confounder
-# For Two-Stage Estimators for Spatial Confounding
+# Two-Stage Estimators for Spatial Confounding with Point-Referenced Data
 # Code by Nate Wiecha, North Carolina State University
+
+# Run simulations: scenarios where unobserved confounder is generated with
+# Gneiting (very smooth) covariance.
+
 rm(list=ls())
 
+# setwd("~/GitHub/Spatial-DML/code/HPC")
 source("dml_function_vector_hpc.R")
 source("dml_simulation_function_foreach_hpc.R")
 source("simulation_functions_hpc.R")
